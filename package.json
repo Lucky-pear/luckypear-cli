@@ -12,7 +12,8 @@
     "build": "tsc && cp -r templates dist/",
     "dev": "tsc --watch",
     "start": "node dist/index.js",
-    "link:local": "npm run build && npm link"
+    "link:local": "npm run build && npm link",
+    "deploy": "npm run build && npm publish"
   },
   "dependencies": {
     "axios": "^1.6.0",
