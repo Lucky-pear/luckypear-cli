@@ -1,5 +1,9 @@
 import fs from "fs-extra";
-import path from "path";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 function toPascalCase(str: string): string {
   return str
@@ -25,7 +29,6 @@ export async function generateProjectStructure(
     "src/shared/ui",
   ];
 
-  // Create all directories first
   for (const dir of dirs) {
     await fs.mkdirp(path.join(projectPath, dir));
   }
@@ -87,51 +90,6 @@ export const sessionActions = {
 export * from './model/store.js';
 export * from './model/types.js';
 `,
-    "babel.config.js": `
-module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: ["babel-preset-expo"],
-    plugins: ["react-native-reanimated/plugin"],
-  };
-};
-`,
-    "metro.config.js": `
-const { getDefaultConfig } = require("expo/metro-config");
-const config = getDefaultConfig(__dirname, { 
-  isCSSEnabled: true,
-});
-
-config.resolver.assetExts.push("wasm");
-config.transformer.getTransformOptions = async () => ({
-  transform: {
-    experimentalImportSupport: false,
-    inlineRequires: true,
-  },
-});
-
-module.exports = config;
-`,
-    "path-fs-canvaskit-postinstall.js": `
-const fs = require("fs");
-const path = require("path");
-
-const packageJsonPath = path.join(
-  __dirname,
-  "node_modules",
-  "canvaskit-wasm",
-  "package.json"
-);
-const packageJson = require(packageJsonPath);
-
-packageJson.browser = {
-  fs: false,
-  path: false,
-  os: false,
-};
-
-fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
-`,
     "app.json": `
 {
   "expo": {
@@ -146,20 +104,25 @@ fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "io.luckypear.${appSlug}"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "io.luckypear.${appSlug}"
     },
-    "plugins": []
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
+    "newArchEnabled": true
   }
-}
-`,
+}`,
   };
 
   for (const [filePath, content] of Object.entries(baseFiles)) {
@@ -172,4 +135,9 @@ fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 
   // Create assets directory
   await fs.mkdirp(path.join(projectPath, "assets"));
+
+  await fs.copy(
+    path.join(__dirname, "../../templates/assets"),
+    path.join(projectPath, "assets")
+  );
 }

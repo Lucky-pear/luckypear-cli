@@ -15,10 +15,10 @@ export async function installDependencies(
   versions: Record<string, string>,
   options: InstallOptions
 ) {
-  const packageJson = {
+  let packageJson: Record<string, any> = {
     name: path.basename(projectPath),
     version: "1.0.0",
-    main: "expo/AppEntry.js",
+    main: "expo-router/entry",
     scripts: {
       start: "expo start",
       android: "expo run:android",
@@ -28,12 +28,15 @@ export async function installDependencies(
       lint: "eslint .",
       "lint:fix": "eslint . --fix",
       typecheck: "tsc --noEmit",
-      postinstall:
-        "npx setup-skia-web public && node path-fs-canvaskit-postinstall.js",
     },
     dependencies: {},
     devDependencies: {},
   };
+
+  if (options.withSkia) {
+    packageJson.scripts.postinstall =
+      "npx setup-skia-web public && node path-fs-canvaskit-postinstall.js";
+  }
 
   await fs.writeJSON(path.join(projectPath, "package.json"), packageJson, {
     spaces: 2,
@@ -45,6 +48,7 @@ export async function installDependencies(
     `react-native@${versions["react-native"]}`,
     "react-native-web",
     "@expo/webpack-config",
+    "@expo/metro-runtime",
     "expo-router",
     "expo-linking",
     "expo-constants",

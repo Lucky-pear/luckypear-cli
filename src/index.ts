@@ -1,11 +1,13 @@
 #!/usr/bin/env node
 import chalk from "chalk";
+import { Command } from "commander";
 import inquirer from "inquirer";
 import ora from "ora";
 import path from "path";
 import { generateProjectStructure } from "./utils/generateStructure.js";
 import { getLatestVersions } from "./utils/getPackageVersions.js";
 import { installDependencies } from "./utils/installDependencies.js";
+import { setupConfigs } from "./utils/setupConfigs.js";
 import { validateProjectName } from "./utils/validateProjectName.js";
 
 interface ProjectOptions {
@@ -26,6 +28,9 @@ async function createProject(options: ProjectOptions) {
     spinner.text = "Creating project structure...";
     await generateProjectStructure(projectPath, options.name);
 
+    spinner.text = "Setting up configuration files...";
+    await setupConfigs(projectPath, options);
+
     spinner.text = "Installing dependencies...";
     await installDependencies(projectPath, versions, options);
 
@@ -33,7 +38,7 @@ async function createProject(options: ProjectOptions) {
 
     console.log("\n" + chalk.bold("Next steps:"));
     console.log(chalk.cyan(`  1. cd ${options.name}`));
-    console.log(chalk.cyan("  2. bun run dev\n"));
+    console.log(chalk.cyan("  2. bun start\n"));
   } catch (error) {
     spinner.fail(chalk.red("Failed to create project"));
     console.error(error);
@@ -82,4 +87,16 @@ async function init() {
   }
 }
 
-init();
+const program = new Command();
+
+program
+  .name("luckypear-cli")
+  .description("CLI to generate FSD structured Expo projects")
+  .version("1.0.0");
+
+program
+  .command("init")
+  .description("Initialize a new FSD structured Expo project")
+  .action(init);
+
+program.parse();
