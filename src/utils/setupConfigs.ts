@@ -140,7 +140,6 @@ fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
     await fs.writeFile(path.join(projectPath, file), content.trim() + "\n");
   }
 
-  // Create gitignore
   const gitignore = `
 node_modules/
 .expo/

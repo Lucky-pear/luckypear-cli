@@ -70,10 +70,8 @@ export async function installDependencies(
     dependencies.push("@shopify/react-native-skia@latest");
   }
 
-  // Install dependencies using bun
   await execAsync(`cd ${projectPath} && bun install ${dependencies.join(" ")}`);
 
-  // Install dev dependencies
   const devDependencies = [
     "@typescript-eslint/eslint-plugin",
     "@typescript-eslint/parser",

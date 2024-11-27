@@ -36,7 +36,6 @@ export async function generateProjectStructure(
   const appName = toPascalCase(projectName);
   const appSlug = projectName.toLowerCase();
 
-  // Create base files
   const baseFiles = {
     "app/_layout.tsx": `
 import { Stack } from 'expo-router';
@@ -133,7 +132,6 @@ export * from './model/types.js';
     );
   }
 
-  // Create assets directory
   await fs.mkdirp(path.join(projectPath, "assets"));
 
   await fs.copy(
