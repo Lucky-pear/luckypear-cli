@@ -136,19 +136,45 @@ fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
   }
 
   const gitignore = `
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
 node_modules/
+
+# Expo
 .expo/
 dist/
-npm-debug.*
+web-build/
+
+# Native
+*.orig.*
 *.jks
 *.p8
 *.p12
 *.key
 *.mobileprovision
-*.orig.*
-web-build/
-.env
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
 .DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# prebuild
+ios/
+android/
 `;
 
   await fs.writeFile(
