@@ -1,12 +1,7 @@
 import fs from "fs-extra";
 import path from "path";
 
-interface SetupOptions {
-  withReanimated: boolean;
-  withSkia: boolean;
-}
-
-export async function setupConfigs(projectPath: string, options: SetupOptions) {
+export async function setupConfigs(projectPath: string, options: FlagOptions) {
   const configs: Record<string, string> = {
     ".eslintrc.js": `
 module.exports = {

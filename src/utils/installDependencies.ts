@@ -5,15 +5,10 @@ import { promisify } from "util";
 
 const execAsync = promisify(exec);
 
-interface InstallOptions {
-  withReanimated: boolean;
-  withSkia: boolean;
-}
-
 export async function installDependencies(
   projectPath: string,
   versions: Record<string, string>,
-  options: InstallOptions
+  options: FlagOptions
 ) {
   let packageJson: Record<string, any> = {
     name: path.basename(projectPath),

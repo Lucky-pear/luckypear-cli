@@ -7,13 +7,12 @@ import path from "path";
 import { generateProjectStructure } from "./utils/generateStructure.js";
 import { getLatestVersions } from "./utils/getPackageVersions.js";
 import { installDependencies } from "./utils/installDependencies.js";
+import { prebuild } from "./utils/prebuild.js";
 import { setupConfigs } from "./utils/setupConfigs.js";
 import { validateProjectName } from "./utils/validateProjectName.js";
 
-interface ProjectOptions {
+interface ProjectOptions extends FlagOptions {
   name: string;
-  withReanimated: boolean;
-  withSkia: boolean;
 }
 
 async function createProject(options: ProjectOptions) {
@@ -26,13 +25,16 @@ async function createProject(options: ProjectOptions) {
     const versions = await getLatestVersions();
 
     spinner.text = "Creating project structure...";
-    await generateProjectStructure(projectPath, options.name);
+    await generateProjectStructure(projectPath, options.name, options);
 
     spinner.text = "Setting up configuration files...";
     await setupConfigs(projectPath, options);
 
     spinner.text = "Installing dependencies...";
     await installDependencies(projectPath, versions, options);
+
+    spinner.text = "Running prebuild...";
+    await prebuild(projectPath);
 
     spinner.succeed(chalk.green("Project created successfully! 🎉"));
 
