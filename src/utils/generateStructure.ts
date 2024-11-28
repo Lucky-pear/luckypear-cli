@@ -32,7 +32,7 @@ export async function generateProjectStructure(
   }
 
   const appName = toPascalCase(projectName);
-  const appSlug = projectName.toLowerCase();
+  const appNameLowercase = projectName.toLowerCase();
 
   let baseFiles = {
     "app/_layout.tsx": `
@@ -173,7 +173,8 @@ import { Session, sessionActions, sessionStore } from './store.ts';
 {
   "expo": {
     "name": "${appName}",
-    "slug": "${appSlug}",
+    "slug": "${appNameLowercase}",
+    "scheme": "${appNameLowercase}",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
